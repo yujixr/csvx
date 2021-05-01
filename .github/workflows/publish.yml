@@ -1,0 +1,22 @@
+name: Publish
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  publish:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Login
+      run: cargo login ${TOKEN}
+      env:
+        TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
+    - name: Publish
+      run: cargo publish
