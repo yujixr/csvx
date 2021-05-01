@@ -65,3 +65,13 @@ The following describes the syntax of the expression for each item.
 | asinh(x) | Inverse hyperbolic sine function. |
 | acosh(x) | Inverse hyperbolic cosine function. |
 | atanh(x) | Inverse hyperbolic tangent function. |
+
+## Supported Constants
+
+| Constant | Meaning |
+|---|---|
+| inf | Infinity (∞) |
+| NaN | Not a Number (NaN) |
+| e | Euler's number (e) |
+| pi | Archimedes' constant (π) |
+| tau | The full circle constant (τ) |
