@@ -1,11 +1,11 @@
 # CSVX
 
 [![Crates.io](https://img.shields.io/crates/v/csvx)](https://crates.io/crates/csvx)
-[![Crates.io](https://img.shields.io/crates/l/csvx)](LICENSE)
+[![Crates.io](https://img.shields.io/crates/l/csvx)](https://github.com/yujixr/csvx/blob/main/LICENSE)
 [![docs.rs](https://img.shields.io/docsrs/csvx)](https://docs.rs/csvx)
 
 CSVX is an extension of CSV format.
-this extension allows you to use CSV as a spreadsheet.
+This extension allows you to use CSV as a spreadsheet.
 
 ## Example
 
