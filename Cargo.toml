@@ -1,0 +1,23 @@
+[package]
+name = "csvx"
+version = "0.1.0"
+authors = ["YUJI <mail@yuji.ne.jp>"]
+edition = "2018"
+
+description = "Comma-Separated Values eXtended"
+
+documentation = "https://docs.rs/csvx/"
+homepage = "https://crates.io/crates/csvx"
+repository = "https://github.com/yujixr/csvx"
+
+readme = "README.md"
+
+keywords = ["spreadsheet", "excel", "csv"]
+categories = ["compilers", "database", "data-structures", "mathematics", "parsing"]
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+csv = "1.1"
+thiserror = "1.0"
