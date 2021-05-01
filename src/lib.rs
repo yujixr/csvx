@@ -3,6 +3,10 @@
 //! CSVX is an extension of CSV format.
 //! this extension allows you to use CSV as a spreadsheet.
 //!
+//! Further documentation can be found in the repository on GitHub.
+//!
+//! https://github.com/yujixr/csvx
+//!
 //! ## Example
 //!
 //! ```
