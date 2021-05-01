@@ -41,10 +41,10 @@ pub enum Token {
     LessThanEqual,
     GreaterThan,
     GreaterThanEqual,
-    Comma,
     // Parenthesis
     ParenthesisBegin,
     ParenthesisEnd,
+    Comma,
     // Functions
     FnRef,
     FnIf,
