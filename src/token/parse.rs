@@ -49,11 +49,15 @@ pub fn parse(primitive_tokens: Vec<PrimitiveToken>) -> Result<Vec<Token>, Box<dy
                 raw_string => {
                     let chars: Vec<char> = raw_string.chars().collect();
                     match chars[0] {
-                        '0' => Token::Integer(if raw_string.len() > 2 && chars[1] == 'x' {
-                            i64::from_str_radix(raw_string[2..].borrow(), 16)
+                        '0' => Token::Integer(if raw_string.len() > 2 {
+                            match chars[1] {
+                                'b' => i64::from_str_radix(raw_string[2..].borrow(), 2),
+                                'x' => i64::from_str_radix(raw_string[2..].borrow(), 16),
+                                _ => i64::from_str_radix(raw_string, 8),
+                            }?
                         } else {
-                            i64::from_str_radix(raw_string, 8)
-                        }?),
+                            0
+                        }),
                         '1'..='9' => {
                             if raw_string.contains('.') {
                                 Token::Float(f64::from_str(raw_string)?)
