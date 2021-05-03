@@ -27,7 +27,7 @@ impl Table {
         raw_table[y][x] = raw_string.borrow().to_string();
 
         for y_of_src in 0..refs_table.len() {
-            for x_or_src in 0..refs_table[y].len() {
+            for x_or_src in 0..refs_table[y_of_src].len() {
                 refs_table[y_of_src][x_or_src].retain(|&v| v != (x, y));
             }
         }

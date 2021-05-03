@@ -8,7 +8,7 @@ impl Table {
     /// # Example
     /// ```
     /// table.extend_y();
-    /// println!("RAW TABLE:\n{}", table.export_raw_table()?);
+    /// println!("TABLE:\n{}", table);
     /// ```
     pub fn extend_y(&mut self) {
         let raw_table = &mut self.raw_table;
@@ -50,7 +50,7 @@ impl Table {
     /// # Example
     /// ```
     /// table.extend_x();
-    /// println!("RAW TABLE:\n{}", table.export_raw_table()?);
+    /// println!("TABLE:\n{}", table);
     /// ```
     pub fn extend_x(&mut self) {
         let raw_table = &mut self.raw_table;
