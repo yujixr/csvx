@@ -22,6 +22,7 @@ pub struct Table {
     raw_table: Vec<Vec<String>>,
     tree_table: Vec<Vec<Box<dyn Node>>>,
     refs_table: Vec<Vec<Vec<(usize, usize)>>>,
+    refs_to_table: Vec<Vec<Vec<(usize, usize)>>>,
     calculated_table: Vec<Vec<Value>>,
     current_pos_y: usize,
 }

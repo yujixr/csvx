@@ -60,8 +60,8 @@ impl Table {
         for y in 0..refs_table.len() {
             for x in 0..refs_table[y].len() {
                 for (x_of_src, y_of_src) in &refs_to_table[y][x] {
-                    let x_of_src = *x_of_src as usize;
-                    let y_of_src = *y_of_src as usize;
+                    let x_of_src = *x_of_src;
+                    let y_of_src = *y_of_src;
                     if (x != x_of_src || y != y_of_src)
                         && y_of_src < refs_table.len()
                         && x_of_src < refs_table[y].len()
@@ -82,6 +82,7 @@ impl Table {
             raw_table,
             tree_table,
             refs_table,
+            refs_to_table,
             calculated_table,
             current_pos_y: 0,
         })

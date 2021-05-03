@@ -14,6 +14,7 @@ impl Table {
         let raw_table = &mut self.raw_table;
         let tree_table = &mut self.tree_table;
         let refs_table = &mut self.refs_table;
+        let refs_to_table = &mut self.refs_to_table;
         let calculated_table = &mut self.calculated_table;
 
         calculated_table.swap_remove(calculated_table.len() - 1);
@@ -36,6 +37,7 @@ impl Table {
         raw_table.swap_remove(raw_table.len() - 1);
         tree_table.swap_remove(tree_table.len() - 1);
         refs_table.swap_remove(refs_table.len() - 1);
+        refs_to_table.swap_remove(refs_to_table.len() - 1);
     }
 
     /// Shrink a CSVX table horizontally
@@ -51,6 +53,7 @@ impl Table {
         let raw_table = &mut self.raw_table;
         let tree_table = &mut self.tree_table;
         let refs_table = &mut self.refs_table;
+        let refs_to_table = &mut self.refs_to_table;
         let calculated_table = &mut self.calculated_table;
 
         if let Some(line) = refs_table.first() {
@@ -78,6 +81,9 @@ impl Table {
             line.swap_remove(line.len() - 1);
         }
         for line in refs_table {
+            line.swap_remove(line.len() - 1);
+        }
+        for line in refs_to_table {
             line.swap_remove(line.len() - 1);
         }
     }

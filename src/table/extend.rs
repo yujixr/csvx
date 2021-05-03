@@ -14,6 +14,7 @@ impl Table {
         let raw_table = &mut self.raw_table;
         let tree_table = &mut self.tree_table;
         let refs_table = &mut self.refs_table;
+        let refs_to_table = &mut self.refs_to_table;
         let calculated_table = &mut self.calculated_table;
 
         raw_table.push(if let Some(last) = raw_table.last() {
@@ -31,6 +32,12 @@ impl Table {
         });
 
         refs_table.push(if let Some(last) = refs_table.last() {
+            (0..last.len()).map(|_| vec![]).collect()
+        } else {
+            vec![]
+        });
+
+        refs_to_table.push(if let Some(last) = refs_to_table.last() {
             (0..last.len()).map(|_| vec![]).collect()
         } else {
             vec![]
@@ -56,6 +63,7 @@ impl Table {
         let raw_table = &mut self.raw_table;
         let tree_table = &mut self.tree_table;
         let refs_table = &mut self.refs_table;
+        let refs_to_table = &mut self.refs_to_table;
         let calculated_table = &mut self.calculated_table;
 
         for line in raw_table {
@@ -65,6 +73,9 @@ impl Table {
             line.push(Box::new(Value::Empty));
         }
         for line in refs_table {
+            line.push(vec![]);
+        }
+        for line in refs_to_table {
             line.push(vec![]);
         }
         for line in calculated_table {
