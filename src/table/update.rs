@@ -31,7 +31,7 @@ impl Table {
             let x_of_src = *x_of_src;
             let y_of_src = *y_of_src;
             if y_of_src < refs_table.len() && x_of_src < refs_table[y].len() {
-                refs_table[*y_of_src][*x_of_src].retain(|&v| v != (x, y));
+                refs_table[y_of_src][x_of_src].retain(|&v| v != (x, y));
             }
         }
 
