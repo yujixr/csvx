@@ -27,7 +27,7 @@
 //!     table.update(0, 0, "true")?;
 //!     println!("UPDATED TABLE:\n{}", table.export_calculated_table()?);
 //!
-//!     table.expand_y();
+//!     table.extend_y();
 //!     println!("RAW TABLE:\n{}", table.export_raw_table()?);
 //!
 //!     Ok(())

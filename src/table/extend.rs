@@ -7,10 +7,10 @@ impl Table {
     ///
     /// # Example
     /// ```
-    /// table.expand_y();
+    /// table.extend_y();
     /// println!("RAW TABLE:\n{}", table.export_raw_table()?);
     /// ```
-    pub fn expand_y(&mut self) {
+    pub fn extend_y(&mut self) {
         let raw_table = &mut self.raw_table;
         let tree_table = &mut self.tree_table;
         let refs_table = &mut self.refs_table;
@@ -49,10 +49,10 @@ impl Table {
     ///
     /// # Example
     /// ```
-    /// table.expand_x();
+    /// table.extend_x();
     /// println!("RAW TABLE:\n{}", table.export_raw_table()?);
     /// ```
-    pub fn expand_x(&mut self) {
+    pub fn extend_x(&mut self) {
         let raw_table = &mut self.raw_table;
         let tree_table = &mut self.tree_table;
         let refs_table = &mut self.refs_table;

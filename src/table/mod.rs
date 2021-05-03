@@ -1,4 +1,4 @@
-mod expand;
+mod extend;
 mod export;
 mod new;
 mod update;
