@@ -1,6 +1,7 @@
-mod extend;
 mod export;
+mod extend;
 mod new;
+mod shrink;
 mod update;
 
 use super::*;
