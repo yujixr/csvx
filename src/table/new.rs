@@ -19,36 +19,38 @@ impl Table {
         let mut reader = csv::ReaderBuilder::new()
             .has_headers(false)
             .from_reader(raw_csv.borrow().as_bytes());
-        let mut raw_table: Vec<Vec<String>> = vec![];
+        let mut raw_csv_table: Vec<Vec<String>> = vec![];
 
         for record in reader.records() {
             match record {
-                Ok(record) => raw_table.push(record.iter().map(|item| item.to_owned()).collect()),
+                Ok(record) => {
+                    raw_csv_table.push(record.iter().map(|item| item.to_owned()).collect())
+                }
                 _ => return Err(Box::new(TableError::CSVParseError)),
             }
         }
 
-        let mut raw_string_table = vec![];
+        let mut raw_table = vec![];
         let mut tree_table = vec![];
         let mut refs_table = vec![];
         let mut refs_to_table = vec![];
         let mut calculated_table = vec![];
-        for raw_line in raw_table {
-            let mut raw_string_line = vec![];
+        for raw_csv_line in raw_csv_table {
+            let mut raw_line = vec![];
             let mut tree_line = vec![];
             let mut refs_line = vec![];
             let mut refs_to_line = vec![];
             let mut calculated_line = vec![];
-            for raw_string in raw_line {
-                raw_string_line.push(raw_string.clone());
-                refs_line.push(vec![]);
-                calculated_line.push(Value::Error);
+            for raw_item in raw_csv_line {
+                let (tree, refs) = Self::build_tree(raw_item.clone());
 
-                let (tree, refs) = Self::build_tree(raw_string);
-                tree_line.push(tree);
+                raw_line.push(raw_item);
+                refs_line.push(vec![]);
                 refs_to_line.push(refs);
+                tree_line.push(tree);
+                calculated_line.push(Value::Error);
             }
-            raw_string_table.push(raw_string_line);
+            raw_table.push(raw_line);
             tree_table.push(tree_line);
             refs_table.push(refs_line);
             refs_to_table.push(refs_to_line);
@@ -74,11 +76,11 @@ impl Table {
         }
 
         Ok(Table {
-            raw_table: raw_string_table,
+            raw_table,
             tree_table,
             refs_table,
             calculated_table,
-            current_pos: 0,
+            current_pos_y: 0,
         })
     }
 }

@@ -28,7 +28,7 @@ impl Node for Value {
     fn calc(&self, calculated_table: &Vec<Vec<Value>>) -> Value {
         if let &Value::Ref(x, y) = self {
             if y < calculated_table.len() && x < calculated_table[y].len() {
-                return calculated_table[y][x].clone();
+                calculated_table[y][x].clone()
             } else {
                 Value::Error
             }

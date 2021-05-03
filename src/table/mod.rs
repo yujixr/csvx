@@ -22,11 +22,11 @@ pub struct Table {
     tree_table: Vec<Vec<Box<dyn Node>>>,
     refs_table: Vec<Vec<Vec<(usize, usize)>>>,
     calculated_table: Vec<Vec<Value>>,
-    current_pos: usize,
+    current_pos_y: usize,
 }
 
 impl Table {
-    fn build_tree(raw_string: String) -> (Box<dyn Node>, Vec<(usize, usize)>) {
+    fn build_tree<T: Borrow<str>>(raw_string: T) -> (Box<dyn Node>, Vec<(usize, usize)>) {
         if let Ok(primitive_token_string) = token::primitive_parse(raw_string) {
             if let Ok(token_string) = token::parse(primitive_token_string) {
                 return if token_string.len() == 0 {
@@ -63,18 +63,18 @@ impl ops::Index<usize> for Table {
 impl Iterator for Table {
     type Item = Vec<Value>;
     fn next(&mut self) -> Option<Self::Item> {
-        if self.current_pos < self.calculated_table.len() {
-            let item = self.calculated_table[self.current_pos].clone();
-            self.current_pos += 1;
+        if self.current_pos_y < self.calculated_table.len() {
+            let item = self.calculated_table[self.current_pos_y].clone();
+            self.current_pos_y += 1;
             Some(item)
         } else {
-            self.current_pos = 0;
+            self.current_pos_y = 0;
             None
         }
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
-        let num_of_remaining_items = self.calculated_table.len() - self.current_pos;
+        let num_of_remaining_items = self.calculated_table.len() - self.current_pos_y;
         (num_of_remaining_items, Some(num_of_remaining_items))
     }
 }
@@ -88,7 +88,7 @@ impl fmt::Display for Table {
             for x in 0..self.calculated_table[y].len() {
                 dump = format!("{}{}\t", dump, self.calculated_table[y][x]);
             }
-            dump = format!("{}\n", dump);
+            dump.push('\n');
         }
         write!(f, "{}", dump)
     }

@@ -45,8 +45,9 @@ use xor::Xor;
 
 pub fn parse(seq: &Vec<Token>) -> (Box<dyn Node>, Vec<(usize, usize)>) {
     if seq.first() == Some(&Token::ParenthesisBegin) && seq.last() == Some(&Token::ParenthesisEnd) {
+        let inside_parentheses = &seq[1..seq.len() - 1];
         let (_, has_depth_zero) =
-            seq[1..seq.len() - 1]
+            inside_parentheses
                 .iter()
                 .fold((1, false), |(depth, has_depth_zero), token| {
                     let depth_next = match token {
@@ -57,7 +58,7 @@ pub fn parse(seq: &Vec<Token>) -> (Box<dyn Node>, Vec<(usize, usize)>) {
                     (depth_next, has_depth_zero || depth == 0)
                 });
         if has_depth_zero == false {
-            return parse(&seq[1..seq.len() - 1].to_vec());
+            return parse(&inside_parentheses.to_vec());
         }
     }
 
@@ -357,6 +358,6 @@ fn parse_for_function(
         if args.len() == num_of_args {
             return Some(args);
         }
-    };
+    }
     None
 }
