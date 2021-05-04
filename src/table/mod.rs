@@ -1,6 +1,8 @@
 mod export;
 mod extend;
+mod insert;
 mod new;
+mod remove;
 mod shrink;
 mod update;
 
