@@ -79,10 +79,12 @@ impl Table {
             })
             .collect();
 
-        for y in (y + 1)..refs_table.len() {
-            for x in 0..refs_table[y].len() {
-                for (x, y) in &refs_table[y][x] {
-                    Self::calc(*x, *y, tree_table, refs_table, calculated_table);
+        for y_of_src in (y + 1)..refs_table.len() {
+            for x_of_src in 0..refs_table[y_of_src].len() {
+                for &(x, y) in &refs_table[y_of_src][x_of_src] {
+                    if x != x_of_src || y != y_of_src {
+                        Self::calc(x, y, tree_table, refs_table, calculated_table);
+                    }
                 }
             }
         }
@@ -138,10 +140,12 @@ impl Table {
             })
             .collect();
 
-        for y in 0..refs_table.len() {
-            for x in (x + 1)..refs_table[y].len() {
-                for (x, y) in &refs_table[y][x] {
-                    Self::calc(*x, *y, tree_table, refs_table, calculated_table);
+        for y_of_src in 0..refs_table.len() {
+            for x_of_src in (x + 1)..refs_table[y_of_src].len() {
+                for &(x, y) in &refs_table[y_of_src][x_of_src] {
+                    if x != x_of_src || y != y_of_src {
+                        Self::calc(x, y, tree_table, refs_table, calculated_table);
+                    }
                 }
             }
         }

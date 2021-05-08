@@ -69,7 +69,9 @@ impl Table {
 
         for y in 0..tree_table.len() {
             for x in 0..tree_table[y].len() {
-                Self::calc(x, y, &tree_table, &refs_table, &mut calculated_table);
+                if !refs_table[y][x].contains(&(x, y)) {
+                    Self::calc(x, y, &tree_table, &refs_table, &mut calculated_table);
+                }
             }
         }
 

@@ -39,18 +39,15 @@ impl Table {
         tree_table[y][x] = tree;
         refs_to_table[y][x] = refs;
 
-        for (x_of_src, y_of_src) in &refs_to_table[y][x] {
-            let x_of_src = *x_of_src;
-            let y_of_src = *y_of_src;
-            if (x != x_of_src || y != y_of_src)
-                && y_of_src < refs_table.len()
-                && x_of_src < refs_table[y].len()
-            {
+        for &(x_of_src, y_of_src) in &refs_to_table[y][x] {
+            if y_of_src < refs_table.len() && x_of_src < refs_table[y].len() {
                 refs_table[y_of_src][x_of_src].push((x, y));
             }
         }
 
-        Self::calc(x, y, &tree_table, &refs_table, calculated_table);
+        if !refs_table[y][x].contains(&(x, y)) {
+            Self::calc(x, y, &tree_table, &refs_table, calculated_table);
+        }
         Ok(())
     }
 }

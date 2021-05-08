@@ -49,8 +49,16 @@ impl Table {
         calculated_table: &mut Vec<Vec<Value>>,
     ) {
         calculated_table[y][x] = tree_table[y][x].calc(&calculated_table);
-        for (x, y) in &refs_table[y][x] {
-            Self::calc(*x, *y, tree_table, refs_table, calculated_table);
+        for &(x_of_target, y_of_target) in &refs_table[y][x] {
+            if x != x_of_target || y != y_of_target {
+                Self::calc(
+                    x_of_target,
+                    y_of_target,
+                    tree_table,
+                    refs_table,
+                    calculated_table,
+                );
+            }
         }
     }
 }
