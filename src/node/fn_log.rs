@@ -1,12 +1,12 @@
 use super::*;
 
 pub struct FnLog {
-    base: Box<dyn Node>,
-    number: Box<dyn Node>,
+    base: Box<ThreadSafeNode>,
+    number: Box<ThreadSafeNode>,
 }
 
 impl Node for FnLog {
-    fn new(seqs: Vec<Vec<Token>>) -> (Box<dyn Node>, Vec<(usize, usize)>) {
+    fn new(seqs: Vec<Vec<Token>>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
         let (base, mut base_refs) = parse(&seqs[0]);
         let (number, mut number_refs) = parse(&seqs[1]);
         base_refs.append(&mut number_refs);

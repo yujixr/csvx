@@ -1,12 +1,12 @@
 use super::*;
 
 pub struct Div {
-    left: Box<dyn Node>,
-    right: Box<dyn Node>,
+    left: Box<ThreadSafeNode>,
+    right: Box<ThreadSafeNode>,
 }
 
 impl Node for Div {
-    fn new(seqs: Vec<Vec<Token>>) -> (Box<dyn Node>, Vec<(usize, usize)>) {
+    fn new(seqs: Vec<Vec<Token>>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
         let (left, mut left_refs) = parse(&seqs[0]);
         let (right, mut right_refs) = parse(&seqs[1]);
         left_refs.append(&mut right_refs);

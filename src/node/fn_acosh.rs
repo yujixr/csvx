@@ -1,11 +1,11 @@
 use super::*;
 
 pub struct FnAcosh {
-    leaf: Box<dyn Node>,
+    leaf: Box<ThreadSafeNode>,
 }
 
 impl Node for FnAcosh {
-    fn new(seqs: Vec<Vec<Token>>) -> (Box<dyn Node>, Vec<(usize, usize)>) {
+    fn new(seqs: Vec<Vec<Token>>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
         let (leaf, leaf_refs) = parse(&seqs[0]);
         (Box::new(Self { leaf }), leaf_refs)
     }

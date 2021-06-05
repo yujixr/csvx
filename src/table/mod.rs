@@ -5,7 +5,7 @@ mod remove;
 mod update;
 
 use super::*;
-use node::{Node, Value};
+use node::{ThreadSafeNode, Value};
 use std::{borrow::Borrow, error::Error, fmt, ops};
 use thiserror::Error;
 
@@ -20,7 +20,7 @@ pub enum TableError {
 /// CSVX table
 pub struct Table {
     raw_table: Vec<Vec<String>>,
-    tree_table: Vec<Vec<Box<dyn Node>>>,
+    tree_table: Vec<Vec<Box<ThreadSafeNode>>>,
     refs_table: Vec<Vec<Vec<(usize, usize)>>>,
     refs_to_table: Vec<Vec<Vec<(usize, usize)>>>,
     calculated_table: Vec<Vec<Value>>,
@@ -28,23 +28,23 @@ pub struct Table {
 }
 
 impl Table {
-    fn build_tree<T: Borrow<str>>(raw_string: T) -> (Box<dyn Node>, Vec<(usize, usize)>) {
+    fn build_tree<T: Borrow<str>>(raw_string: T) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
         if let Ok(primitive_token_string) = token::primitive_parse(raw_string) {
             if let Ok(token_string) = token::parse(primitive_token_string) {
                 return if token_string.len() == 0 {
-                    (Box::new(Value::Empty) as Box<dyn Node>, vec![])
+                    (Box::new(Value::Empty) as Box<ThreadSafeNode>, vec![])
                 } else {
                     node::parse(&token_string)
                 };
             }
         }
-        (Box::new(Value::Error) as Box<dyn Node>, vec![])
+        (Box::new(Value::Error) as Box<ThreadSafeNode>, vec![])
     }
 
     fn calc(
         x: usize,
         y: usize,
-        tree_table: &Vec<Vec<Box<dyn Node>>>,
+        tree_table: &Vec<Vec<Box<ThreadSafeNode>>>,
         refs_table: &Vec<Vec<Vec<(usize, usize)>>>,
         calculated_table: &mut Vec<Vec<Value>>,
     ) {

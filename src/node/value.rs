@@ -14,7 +14,7 @@ pub enum Value {
 }
 
 impl Node for Value {
-    fn new(seqs: Vec<Vec<Token>>) -> (Box<dyn Node>, Vec<(usize, usize)>) {
+    fn new(seqs: Vec<Vec<Token>>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
         let val = &seqs[0][0];
         match val.to_owned() {
             Token::Integer(x) => (Box::new(Value::Integer(x)), vec![]),

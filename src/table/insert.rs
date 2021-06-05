@@ -28,7 +28,7 @@ impl Table {
             y,
             if let Some(last) = tree_table.last() {
                 (0..last.len())
-                    .map(|_| Box::new(Value::Empty) as Box<dyn Node>)
+                    .map(|_| Box::new(Value::Empty) as Box<ThreadSafeNode>)
                     .collect()
             } else {
                 vec![]

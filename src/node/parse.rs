@@ -43,7 +43,7 @@ use right_shift::RightShift;
 use sub::Sub;
 use xor::Xor;
 
-pub fn parse(seq: &Vec<Token>) -> (Box<dyn Node>, Vec<(usize, usize)>) {
+pub fn parse(seq: &Vec<Token>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
     if seq.first() == Some(&Token::ParenthesisBegin) && seq.last() == Some(&Token::ParenthesisEnd) {
         let inside_parentheses = &seq[1..seq.len() - 1];
         let (_, has_depth_zero) =

@@ -1,13 +1,13 @@
 use super::*;
 
 pub struct FnIf {
-    condition: Box<dyn Node>,
-    on_true: Box<dyn Node>,
-    on_false: Box<dyn Node>,
+    condition: Box<ThreadSafeNode>,
+    on_true: Box<ThreadSafeNode>,
+    on_false: Box<ThreadSafeNode>,
 }
 
 impl Node for FnIf {
-    fn new(seqs: Vec<Vec<Token>>) -> (Box<dyn Node>, Vec<(usize, usize)>) {
+    fn new(seqs: Vec<Vec<Token>>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
         let (condition, mut condition_refs) = parse(&seqs[0]);
         let (on_true, mut on_true_refs) = parse(&seqs[1]);
         let (on_false, mut on_false_refs) = parse(&seqs[2]);

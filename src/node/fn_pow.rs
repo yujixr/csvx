@@ -1,12 +1,12 @@
 use super::*;
 
 pub struct FnPow {
-    base: Box<dyn Node>,
-    exp: Box<dyn Node>,
+    base: Box<ThreadSafeNode>,
+    exp: Box<ThreadSafeNode>,
 }
 
 impl Node for FnPow {
-    fn new(seqs: Vec<Vec<Token>>) -> (Box<dyn Node>, Vec<(usize, usize)>) {
+    fn new(seqs: Vec<Vec<Token>>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
         let (base, mut base_refs) = parse(&seqs[0]);
         let (exp, mut exp_refs) = parse(&seqs[1]);
         base_refs.append(&mut exp_refs);

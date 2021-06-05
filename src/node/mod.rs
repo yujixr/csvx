@@ -48,9 +48,11 @@ use super::token::*;
 pub use parse::parse;
 pub use value::Value;
 
+pub type ThreadSafeNode = dyn Node + Sync + Send;
+
 pub trait Node {
-    fn new(seqs: Vec<Vec<Token>>) -> (Box<dyn Node>, Vec<(usize, usize)>)
+    fn new(seqs: Vec<Vec<Token>>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>)
     where
-        Self: Sized;
+        Self: Sized + Sync + Send;
     fn calc(&self, calculated_table: &Vec<Vec<Value>>) -> Value;
 }
