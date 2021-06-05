@@ -27,7 +27,7 @@ A1+A2,\"if(true , sqrt(25),round(if(false,1.1,2.5)))\",D2+1969,";
     table.update(0, 0, "true")?;
     println!("UPDATED TABLE:\n{}", table.export_calculated_table()?);
 
-    table.expand_y();
+    table.insert_y(0);
     println!("RAW TABLE:\n{}", table.export_raw_table()?);
 
     Ok(())
