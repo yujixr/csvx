@@ -28,6 +28,16 @@ pub struct Table {
 }
 
 impl Table {
+    /// Retrieve internal raw table.
+    pub fn get_raw_table(&self) -> &Vec<Vec<String>> {
+        &self.raw_table
+    }
+
+    /// Retrieve internal calculated table.
+    pub fn get_calculated_table(&self) -> &Vec<Vec<Value>> {
+        &self.calculated_table
+    }
+
     fn build_tree<T: Borrow<str>>(raw_string: T) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
         if let Ok(primitive_token_string) = token::primitive_parse(raw_string) {
             if let Ok(token_string) = token::parse(primitive_token_string) {
