@@ -1,3 +1,5 @@
+use std::os::raw;
+
 use super::*;
 
 impl Table {
@@ -14,6 +16,10 @@ impl Table {
         let refs_table = &mut self.refs_table;
         let refs_to_table = &mut self.refs_to_table;
         let calculated_table = &mut self.calculated_table;
+
+        if raw_table.len() == 1 {
+            return;
+        }
 
         raw_table.remove(y);
         tree_table.remove(y);
@@ -68,6 +74,14 @@ impl Table {
         let refs_table = &mut self.refs_table;
         let refs_to_table = &mut self.refs_to_table;
         let calculated_table = &mut self.calculated_table;
+
+        if let Some(row) = raw_table.get(0) {
+            if row.len() == 1 {
+                return;
+            }
+        } else {
+            return;
+        }
 
         for line in raw_table {
             line.remove(x);
