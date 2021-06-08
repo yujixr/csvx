@@ -47,64 +47,61 @@ pub fn parse(primitive_tokens: Vec<PrimitiveToken>) -> Result<Vec<Token>, Box<dy
                 "acosh" => Token::FnAcosh,
                 "atanh" => Token::FnAtanh,
                 raw_string => {
-                    let chars: Vec<char> = raw_string.chars().collect();
-                    match chars[0] {
-                        '0' => Token::Integer(if raw_string.len() > 2 {
-                            match chars[1] {
-                                'b' => i64::from_str_radix(raw_string[2..].borrow(), 2),
-                                'x' => i64::from_str_radix(raw_string[2..].borrow(), 16),
-                                _ => i64::from_str_radix(raw_string, 8),
-                            }?
-                        } else {
-                            0
-                        }),
-                        '1'..='9' => {
-                            if raw_string.contains('.') {
-                                Token::Float(f64::from_str(raw_string)?)
-                            } else {
-                                Token::Integer(i64::from_str(raw_string)?)
-                            }
-                        }
-                        'a'..='z' | '_' => {
-                            if chars.iter().all(|char| {
-                                char.is_ascii_alphabetic() || char.is_digit(10) || *char == '_'
-                            }) {
-                                Token::Var(raw_string.to_string())
-                            } else {
-                                return Err(Box::new(ParseError::ProhibitedCharacters(
-                                    raw_string.to_string(),
-                                )));
-                            }
-                        }
-                        'A'..='Z' => {
-                            let mut i = 1;
-                            let mut x = chars[0] as usize - 'A' as usize + 1;
-                            while i < raw_string.len() && matches!(chars[i], 'A'..='Z') {
-                                x = x * 26 + chars[i] as usize - 'A' as usize + 1;
-                                i += 1;
-                            }
-
-                            if i < raw_string.len() {
-                                let raw_string = chars[i..].iter().collect::<String>();
-                                if let Ok(y) = usize::from_str(raw_string.as_str()) {
-                                    Token::Ref(x - 1, y - 1)
-                                } else if chars[i..].iter().all(|char| {
+                    if raw_string.contains('.') {
+                        Token::Float(f64::from_str(raw_string)?)
+                    } else {
+                        let chars: Vec<char> = raw_string.chars().collect();
+                        match chars[0] {
+                            '0' => Token::Integer(match chars.get(1) {
+                                Some('b') => i64::from_str_radix(raw_string[2..].borrow(), 2)?,
+                                Some('x') => i64::from_str_radix(raw_string[2..].borrow(), 16)?,
+                                Some(_) => i64::from_str_radix(raw_string, 8)?,
+                                None => 0,
+                            }),
+                            '1'..='9' => Token::Integer(i64::from_str(raw_string)?),
+                            'a'..='z' | '_' => {
+                                if chars.iter().all(|char| {
                                     char.is_ascii_alphabetic() || char.is_digit(10) || *char == '_'
                                 }) {
-                                    Token::Var(raw_string)
+                                    Token::Var(raw_string.to_string())
                                 } else {
                                     return Err(Box::new(ParseError::ProhibitedCharacters(
-                                        raw_string,
+                                        raw_string.to_string(),
                                     )));
                                 }
-                            } else {
-                                Token::Var(raw_string.to_string())
                             }
-                        }
-                        _ => {
-                            return Err(Box::new(ParseError::ProhibitedCharacters(
-                                raw_string.to_string(),
-                            )))
+                            'A'..='Z' => {
+                                let mut i = 1;
+                                let mut x = chars[0] as usize - 'A' as usize + 1;
+                                while i < raw_string.len() && matches!(chars[i], 'A'..='Z') {
+                                    x = x * 26 + chars[i] as usize - 'A' as usize + 1;
+                                    i += 1;
+                                }
+
+                                if i < raw_string.len() {
+                                    let raw_string = chars[i..].iter().collect::<String>();
+                                    if let Ok(y) = usize::from_str(raw_string.as_str()) {
+                                        Token::Ref(x - 1, y - 1)
+                                    } else if chars[i..].iter().all(|char| {
+                                        char.is_ascii_alphabetic()
+                                            || char.is_digit(10)
+                                            || *char == '_'
+                                    }) {
+                                        Token::Var(raw_string)
+                                    } else {
+                                        return Err(Box::new(ParseError::ProhibitedCharacters(
+                                            raw_string,
+                                        )));
+                                    }
+                                } else {
+                                    Token::Var(raw_string.to_string())
+                                }
+                            }
+                            _ => {
+                                return Err(Box::new(ParseError::ProhibitedCharacters(
+                                    raw_string.to_string(),
+                                )))
+                            }
                         }
                     }
                 }
