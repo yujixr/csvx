@@ -299,7 +299,11 @@ fn parse_for_binary_operator(
                 _ => depth,
             };
 
-            if token == &op_target && depth == 0 && seq_before_op.len() != 0 {
+            if is_already_found == false
+                && token == &op_target
+                && depth == 0
+                && seq_before_op.len() != 0
+            {
                 (true, 0)
             } else {
                 if is_already_found == false {
