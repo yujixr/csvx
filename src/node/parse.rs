@@ -299,23 +299,20 @@ fn parse_for_binary_operator(
                 _ => depth,
             };
 
-            if is_already_found == false
-                && token == &op_target
-                && depth == 0
-                && seq_before_op.len() != 0
-            {
-                (true, 0)
+            if is_already_found {
+                seq_after_op.push(token.clone());
+                (true, depth_next)
             } else {
-                if is_already_found == false {
-                    seq_before_op.push(token.clone());
+                if token == &op_target && depth == 0 && seq_before_op.len() != 0 {
+                    (true, 0)
                 } else {
-                    seq_after_op.push(token.clone());
+                    seq_before_op.push(token.clone());
+                    (false, depth_next)
                 }
-                (is_already_found, depth_next)
             }
         });
 
-    if is_op_found == true {
+    if is_op_found == true && seq_after_op.len() != 0 {
         Some((seq_before_op, seq_after_op))
     } else {
         None
