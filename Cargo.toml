@@ -1,6 +1,6 @@
 [package]
 name = "csvx"
-version = "0.1.9"
+version = "0.1.10"
 authors = ["YUJI <mail@yuji.ne.jp>"]
 edition = "2018"
 

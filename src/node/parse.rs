@@ -44,15 +44,15 @@ use sub::Sub;
 use xor::Xor;
 
 pub fn parse(seq: &Vec<Token>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
-    if seq.first() == Some(&Token::ParenthesisBegin) && seq.last() == Some(&Token::ParenthesisEnd) {
+    if seq.first() == Some(&Token::ParenthesisEnd) && seq.last() == Some(&Token::ParenthesisBegin) {
         let inside_parentheses = &seq[1..seq.len() - 1];
         let (_, has_depth_zero) =
             inside_parentheses
                 .iter()
                 .fold((1, false), |(depth, has_depth_zero), token| {
                     let depth_next = match token {
-                        Token::ParenthesisBegin => depth + 1,
-                        Token::ParenthesisEnd => depth - 1,
+                        Token::ParenthesisEnd => depth + 1,
+                        Token::ParenthesisBegin => depth - 1,
                         _ => depth,
                     };
                     (depth_next, has_depth_zero || depth == 0)
