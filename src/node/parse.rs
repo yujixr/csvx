@@ -201,7 +201,7 @@ fn parse_for_unary_operator(
             .find(|(op_target, _)| Some(op_target) == seq.last()),
         seq.len() > 2,
     ) {
-        Some(initializer(vec![seq[..seq.len() - 2].to_vec()]))
+        Some(initializer(vec![seq[..seq.len() - 1].to_vec()]))
     } else {
         None
     }
@@ -229,7 +229,7 @@ fn parse_for_function(
         let mut args = vec![];
         let mut arg = vec![];
         let mut depth = 0;
-        for token in seq[2..seq.len() - 1].iter() {
+        for token in seq[1..seq.len() - 2].iter() {
             if token == &Token::ParenthesisEnd {
                 depth += 1;
             } else if token == &Token::ParenthesisBegin {
