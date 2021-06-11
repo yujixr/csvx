@@ -64,17 +64,14 @@ pub fn parse(seq: &Vec<Token>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
 
     if let Some(x) = parse_for_binary_operator(seq, &[(Token::LogicalOr, LogicalOr::new)]) {
         x
-    } else if let Some(x) =
-        parse_for_binary_operator(seq, &[(Token::LogicalAnd, LogicalAnd::new)])
+    } else if let Some(x) = parse_for_binary_operator(seq, &[(Token::LogicalAnd, LogicalAnd::new)])
     {
         x
-    } else if let Some(x) = parse_for_binary_operator(seq, &[(Token::BitwiseOr, BitwiseOr::new)])
-    {
+    } else if let Some(x) = parse_for_binary_operator(seq, &[(Token::BitwiseOr, BitwiseOr::new)]) {
         x
     } else if let Some(x) = parse_for_binary_operator(seq, &[(Token::Xor, Xor::new)]) {
         x
-    } else if let Some(x) =
-        parse_for_binary_operator(seq, &[(Token::BitwiseAnd, BitwiseAnd::new)])
+    } else if let Some(x) = parse_for_binary_operator(seq, &[(Token::BitwiseAnd, BitwiseAnd::new)])
     {
         x
     } else if let Some(x) = parse_for_binary_operator(
@@ -164,27 +161,27 @@ fn parse_for_binary_operator(
     let mut seq_after_op = vec![];
     let (initializer, _) = seq.iter().fold((None, 0), |(initializer, depth), token| {
         let depth_next = match token {
-            Token::ParenthesisBegin => depth + 1,
-            Token::ParenthesisEnd => depth - 1,
+            Token::ParenthesisEnd => depth + 1,
+            Token::ParenthesisBegin => depth - 1,
             _ => depth,
         };
 
         if let Some(_) = initializer {
-            seq_after_op.push(token.clone());
+            seq_before_op.push(token.clone());
             (initializer, depth_next)
         } else if let (Some((_, initializer)), true, true) = (
             op_targets.iter().find(|(op_target, _)| op_target == token),
             depth == 0,
-            seq_before_op.len() != 0,
+            seq_after_op.len() != 0,
         ) {
             (Some(initializer), 0)
         } else {
-            seq_before_op.push(token.clone());
+            seq_after_op.push(token.clone());
             (None, depth_next)
         }
     });
 
-    if let (Some(initializer), true) = (initializer, seq_after_op.len() != 0) {
+    if let (Some(initializer), true) = (initializer, seq_before_op.len() != 0) {
         Some(initializer(vec![seq_before_op, seq_after_op]))
     } else {
         None
@@ -198,11 +195,13 @@ fn parse_for_unary_operator(
         fn(seqs: Vec<Vec<Token>>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>),
     )],
 ) -> Option<(Box<ThreadSafeNode>, Vec<(usize, usize)>)> {
-    if let Some((_, initializer)) = op_targets
-        .iter()
-        .find(|(op_target, _)| Some(op_target) == seq.first())
-    {
-        Some(initializer(vec![seq[1..].to_vec()]))
+    if let (Some((_, initializer)), true) = (
+        op_targets
+            .iter()
+            .find(|(op_target, _)| Some(op_target) == seq.last()),
+        seq.len() > 2,
+    ) {
+        Some(initializer(vec![seq[..seq.len() - 2].to_vec()]))
     } else {
         None
     }
@@ -217,23 +216,23 @@ fn parse_for_function(
     )],
 ) -> Option<(Box<ThreadSafeNode>, Vec<(usize, usize)>)> {
     if let (
-        Some((_, initializer, num_of_args)),
-        Some(&Token::ParenthesisBegin),
         Some(&Token::ParenthesisEnd),
+        Some(&Token::ParenthesisBegin),
+        Some((_, initializer, num_of_args)),
     ) = (
+        seq.first(),
+        seq.get(seq.len() - 2),
         op_targets
             .iter()
-            .find(|(op_target, _, _)| Some(op_target) == seq.first()),
-        seq.get(1),
-        seq.last(),
+            .find(|(op_target, _, _)| Some(op_target) == seq.last()),
     ) {
         let mut args = vec![];
         let mut arg = vec![];
         let mut depth = 0;
         for token in seq[2..seq.len() - 1].iter() {
-            if token == &Token::ParenthesisBegin {
+            if token == &Token::ParenthesisEnd {
                 depth += 1;
-            } else if token == &Token::ParenthesisEnd {
+            } else if token == &Token::ParenthesisBegin {
                 depth -= 1;
             }
 
@@ -244,7 +243,10 @@ fn parse_for_function(
                 arg.push(token.clone());
             }
         }
-        args.push(arg);
+
+        if arg.len() != 0 {
+            args.push(arg);
+        }
 
         if &args.len() == num_of_args {
             Some(initializer(args))

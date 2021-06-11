@@ -109,5 +109,6 @@ pub fn parse(primitive_tokens: Vec<PrimitiveToken>) -> Result<Vec<Token>, Box<dy
         });
     }
 
+    tokens.reverse();
     Ok(tokens)
 }
