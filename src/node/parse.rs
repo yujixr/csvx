@@ -249,6 +249,7 @@ fn parse_for_function(
         }
 
         if &args.len() == num_of_args {
+            args.reverse();
             Some(initializer(args))
         } else {
             None
