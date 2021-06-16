@@ -10,6 +10,7 @@ pub enum Value {
     String(String),
     Boolean(bool),
     Ref(usize, usize),
+    Range(usize, usize, usize, usize),
     Empty,
 }
 
@@ -22,6 +23,14 @@ impl Node for Value {
             Token::String(x) => (Box::new(Value::String(x)), vec![]),
             Token::Boolean(x) => (Box::new(Value::Boolean(x)), vec![]),
             Token::Ref(x, y) => (Box::new(Value::Ref(x, y)), vec![(x, y)]),
+            Token::Range(x1, y1, x2, y2) => (Box::new(Value::Range(x1, y1, x2, y2)), {
+                let rx = x1.min(x2)..=x1.max(x2);
+                let ry = y1.min(y2)..=y1.max(y2);
+                rx.flat_map(|x| {
+                    return ry.clone().map(move |y| (x, y));
+                })
+                .collect()
+            }),
             _ => (Box::new(Value::Error), vec![]),
         }
     }
@@ -46,6 +55,7 @@ impl fmt::Display for Value {
             Value::String(x) => write!(f, "\"{}\"", x),
             Value::Boolean(x) => write!(f, "{}", x),
             Value::Ref(x, y) => write!(f, "({},{})", x, y),
+            Value::Range(x1, y1, x2, y2) => write!(f, "({},{}) : ({},{})", x1, y1, x2, y2),
             Value::Empty => write!(f, ""),
             _ => write!(f, "Error"),
         }

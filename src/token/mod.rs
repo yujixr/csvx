@@ -19,6 +19,7 @@ pub enum Token {
     Boolean(bool),
     // Reference
     Ref(usize, usize),
+    Range(usize, usize, usize, usize),
     // Variable
     Var(String),
     // Operator
