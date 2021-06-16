@@ -120,7 +120,7 @@ pub fn parse(primitive_tokens: Vec<PrimitiveToken>) -> Result<Vec<Token>, Box<dy
                         let x2 = parse_26ary_number(x2);
                         let y2 = usize::from_str(y2.iter().collect::<String>().as_str())?;
 
-                        Token::Range(x1, y1, x2, y2)
+                        Token::Range(x1 - 1, y1 - 1, x2 - 1, y2 - 1)
                     } else {
                         let chars: Vec<char> = raw_string.chars().collect();
                         match chars[0] {

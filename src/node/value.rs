@@ -16,8 +16,8 @@ pub enum Value {
 
 impl Node for Value {
     fn new(seqs: Vec<Vec<Token>>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
-        let val = &seqs[0][0];
-        match val.to_owned() {
+        let val = seqs[0][0].clone();
+        match val {
             Token::Integer(x) => (Box::new(Value::Integer(x)), vec![]),
             Token::Float(x) => (Box::new(Value::Float(x)), vec![]),
             Token::String(x) => (Box::new(Value::String(x)), vec![]),
@@ -35,14 +35,19 @@ impl Node for Value {
         }
     }
     fn calc(&self, calculated_table: &Vec<Vec<Value>>) -> Value {
-        if let &Value::Ref(x, y) = self {
-            if y < calculated_table.len() && x < calculated_table[y].len() {
-                calculated_table[y][x].clone()
-            } else {
-                Value::Error
+        match self {
+            Value::Ref(x, y) => {
+                if let Some(row) = calculated_table.get(*y) {
+                    if let Some(item) = row.get(*x) {
+                        item.clone()
+                    } else {
+                        Value::Error
+                    }
+                } else {
+                    Value::Error
+                }
             }
-        } else {
-            self.clone()
+            _ => self.clone(),
         }
     }
 }
