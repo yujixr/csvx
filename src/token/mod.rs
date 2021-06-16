@@ -48,6 +48,8 @@ pub enum Token {
     Comma,
     // Functions
     FnRef,
+    FnSum,
+    FnAvg,
     FnIf,
     FnRound,
     FnFloor,

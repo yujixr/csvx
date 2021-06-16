@@ -10,6 +10,7 @@ use fn_asin::FnAsin;
 use fn_asinh::FnAsinh;
 use fn_atan::FnAtan;
 use fn_atanh::FnAtanh;
+use fn_avg::FnAvg;
 use fn_ceil::FnCeil;
 use fn_cos::FnCos;
 use fn_cosh::FnCosh;
@@ -25,6 +26,7 @@ use fn_round::FnRound;
 use fn_sin::FnSin;
 use fn_sinh::FnSinh;
 use fn_sqrt::FnSqrt;
+use fn_sum::FnSum;
 use fn_tan::FnTan;
 use fn_tanh::FnTanh;
 use greater_than::GreaterThan;
@@ -118,6 +120,8 @@ pub fn parse(seq: &Vec<Token>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
         seq,
         &[
             (Token::FnRef, FnRef::new, 2),
+            (Token::FnSum, FnSum::new, 1),
+            (Token::FnAvg, FnAvg::new, 1),
             (Token::FnIf, FnIf::new, 3),
             (Token::FnRound, FnRound::new, 1),
             (Token::FnFloor, FnFloor::new, 1),

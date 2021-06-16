@@ -38,6 +38,8 @@ pub fn parse(primitive_tokens: Vec<PrimitiveToken>) -> Result<Vec<Token>, Box<dy
                 "pi" => Token::Float(consts::PI),
                 "tau" => Token::Float(consts::TAU),
                 "ref" => Token::FnRef,
+                "sum" => Token::FnSum,
+                "avg" => Token::FnAvg,
                 "if" => Token::FnIf,
                 "round" => Token::FnRound,
                 "floor" => Token::FnFloor,
