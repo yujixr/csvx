@@ -1,12 +1,12 @@
 use super::*;
 
-pub struct FnIf {
+pub struct Node {
     condition: Box<ThreadSafeNode>,
     on_true: Box<ThreadSafeNode>,
     on_false: Box<ThreadSafeNode>,
 }
 
-impl Node for FnIf {
+impl super::Node for Node {
     fn new(seqs: Vec<Vec<Token>>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
         let (condition, mut condition_refs) = parse(&seqs[0]);
         let (on_true, mut on_true_refs) = parse(&seqs[1]);

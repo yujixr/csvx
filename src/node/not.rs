@@ -1,10 +1,10 @@
 use super::*;
 
-pub struct Not {
+pub struct Node {
     leaf: Box<ThreadSafeNode>,
 }
 
-impl Node for Not {
+impl super::Node for Node {
     fn new(seqs: Vec<Vec<Token>>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
         let (leaf, refs) = parse(&seqs[0]);
         (Box::new(Self { leaf }), refs)

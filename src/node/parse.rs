@@ -1,49 +1,4 @@
 use super::*;
-use add::Add;
-use bitwise_and::BitwiseAnd;
-use bitwise_or::BitwiseOr;
-use div::Div;
-use equal::Equal;
-use fn_acos::FnAcos;
-use fn_acosh::FnAcosh;
-use fn_asin::FnAsin;
-use fn_asinh::FnAsinh;
-use fn_atan::FnAtan;
-use fn_atanh::FnAtanh;
-use fn_avg::FnAvg;
-use fn_ceil::FnCeil;
-use fn_cos::FnCos;
-use fn_cosh::FnCosh;
-use fn_floor::FnFloor;
-use fn_if::FnIf;
-use fn_ln::FnLn;
-use fn_log::FnLog;
-use fn_log10::FnLog10;
-use fn_log2::FnLog2;
-use fn_pow::FnPow;
-use fn_ref::FnRef;
-use fn_round::FnRound;
-use fn_sin::FnSin;
-use fn_sinh::FnSinh;
-use fn_sqrt::FnSqrt;
-use fn_sum::FnSum;
-use fn_tan::FnTan;
-use fn_tanh::FnTanh;
-use greater_than::GreaterThan;
-use greater_than_equal::GreaterThanEqual;
-use left_shift::LeftShift;
-use less_than::LessThan;
-use less_than_equal::LessThanEqual;
-use logical_and::LogicalAnd;
-use logical_or::LogicalOr;
-use minus::Minus;
-use modulo::Mod;
-use mul::Mul;
-use not::Not;
-use not_equal::NotEqual;
-use right_shift::RightShift;
-use sub::Sub;
-use xor::Xor;
 
 pub fn parse(seq: &Vec<Token>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
     if seq.first() == Some(&Token::ParenthesisEnd) && seq.last() == Some(&Token::ParenthesisBegin) {
@@ -64,86 +19,95 @@ pub fn parse(seq: &Vec<Token>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
         }
     }
 
-    if let Some(x) = parse_for_binary_operator(seq, &[(Token::LogicalOr, LogicalOr::new)]) {
-        x
-    } else if let Some(x) = parse_for_binary_operator(seq, &[(Token::LogicalAnd, LogicalAnd::new)])
-    {
-        x
-    } else if let Some(x) = parse_for_binary_operator(seq, &[(Token::BitwiseOr, BitwiseOr::new)]) {
-        x
-    } else if let Some(x) = parse_for_binary_operator(seq, &[(Token::Xor, Xor::new)]) {
-        x
-    } else if let Some(x) = parse_for_binary_operator(seq, &[(Token::BitwiseAnd, BitwiseAnd::new)])
-    {
-        x
-    } else if let Some(x) = parse_for_binary_operator(
-        seq,
-        &[(Token::Equal, Equal::new), (Token::NotEqual, NotEqual::new)],
-    ) {
-        x
-    } else if let Some(x) = parse_for_binary_operator(
-        seq,
-        &[
-            (Token::LessThan, LessThan::new),
-            (Token::LessThanEqual, LessThanEqual::new),
-            (Token::GreaterThan, GreaterThan::new),
-            (Token::GreaterThanEqual, GreaterThanEqual::new),
-        ],
-    ) {
-        x
-    } else if let Some(x) = parse_for_binary_operator(
-        seq,
-        &[
-            (Token::LeftShift, LeftShift::new),
-            (Token::RightShift, RightShift::new),
-        ],
-    ) {
+    if let Some(x) = parse_for_binary_operator(seq, &[(Token::LogicalOr, logical_or::Node::new)]) {
         x
     } else if let Some(x) =
-        parse_for_binary_operator(seq, &[(Token::Add, Add::new), (Token::Sub, Sub::new)])
+        parse_for_binary_operator(seq, &[(Token::LogicalAnd, logical_and::Node::new)])
+    {
+        x
+    } else if let Some(x) =
+        parse_for_binary_operator(seq, &[(Token::BitwiseOr, bitwise_or::Node::new)])
+    {
+        x
+    } else if let Some(x) = parse_for_binary_operator(seq, &[(Token::Xor, xor::Node::new)]) {
+        x
+    } else if let Some(x) =
+        parse_for_binary_operator(seq, &[(Token::BitwiseAnd, bitwise_and::Node::new)])
     {
         x
     } else if let Some(x) = parse_for_binary_operator(
         seq,
         &[
-            (Token::Mul, Mul::new),
-            (Token::Div, Div::new),
-            (Token::Mod, Mod::new),
+            (Token::Equal, equal::Node::new),
+            (Token::NotEqual, not_equal::Node::new),
         ],
     ) {
         x
-    } else if let Some(x) =
-        parse_for_unary_operator(seq, &[(Token::Sub, Minus::new), (Token::Not, Not::new)])
-    {
+    } else if let Some(x) = parse_for_binary_operator(
+        seq,
+        &[
+            (Token::LessThan, less_than::Node::new),
+            (Token::LessThanEqual, less_than_equal::Node::new),
+            (Token::GreaterThan, greater_than::Node::new),
+            (Token::GreaterThanEqual, greater_than_equal::Node::new),
+        ],
+    ) {
+        x
+    } else if let Some(x) = parse_for_binary_operator(
+        seq,
+        &[
+            (Token::LeftShift, left_shift::Node::new),
+            (Token::RightShift, right_shift::Node::new),
+        ],
+    ) {
+        x
+    } else if let Some(x) = parse_for_binary_operator(
+        seq,
+        &[(Token::Add, add::Node::new), (Token::Sub, sub::Node::new)],
+    ) {
+        x
+    } else if let Some(x) = parse_for_binary_operator(
+        seq,
+        &[
+            (Token::Mul, mul::Node::new),
+            (Token::Div, div::Node::new),
+            (Token::Mod, modulo::Node::new),
+        ],
+    ) {
+        x
+    } else if let Some(x) = parse_for_unary_operator(
+        seq,
+        &[(Token::Sub, minus::Node::new), (Token::Not, not::Node::new)],
+    ) {
         x
     } else if let Some(x) = parse_for_function(
         seq,
         &[
-            (Token::FnRef, FnRef::new, 2),
-            (Token::FnSum, FnSum::new, 1),
-            (Token::FnAvg, FnAvg::new, 1),
-            (Token::FnIf, FnIf::new, 3),
-            (Token::FnRound, FnRound::new, 1),
-            (Token::FnFloor, FnFloor::new, 1),
-            (Token::FnCeil, FnCeil::new, 1),
-            (Token::FnLog, FnLog::new, 2),
-            (Token::FnLn, FnLn::new, 1),
-            (Token::FnLog2, FnLog2::new, 1),
-            (Token::FnLog10, FnLog10::new, 1),
-            (Token::FnSqrt, FnSqrt::new, 1),
-            (Token::FnPow, FnPow::new, 2),
-            (Token::FnSin, FnSin::new, 1),
-            (Token::FnCos, FnCos::new, 1),
-            (Token::FnTan, FnTan::new, 1),
-            (Token::FnAsin, FnAsin::new, 1),
-            (Token::FnAcos, FnAcos::new, 1),
-            (Token::FnAtan, FnAtan::new, 1),
-            (Token::FnSinh, FnSinh::new, 1),
-            (Token::FnCosh, FnCosh::new, 1),
-            (Token::FnTanh, FnTanh::new, 1),
-            (Token::FnAsinh, FnAsinh::new, 1),
-            (Token::FnAcosh, FnAcosh::new, 1),
-            (Token::FnAtanh, FnAtanh::new, 1),
+            (Token::FnRef, fn_ref::Node::new, 2),
+            (Token::FnSum, fn_sum::Node::new, 1),
+            (Token::FnAvg, fn_avg::Node::new, 1),
+            (Token::FnIf, fn_if::Node::new, 3),
+            (Token::FnRound, fn_round::Node::new, 1),
+            (Token::FnFloor, fn_floor::Node::new, 1),
+            (Token::FnCeil, fn_ceil::Node::new, 1),
+            (Token::FnLog, fn_log::Node::new, 2),
+            (Token::FnLn, fn_ln::Node::new, 1),
+            (Token::FnLog2, fn_log2::Node::new, 1),
+            (Token::FnLog10, fn_log10::Node::new, 1),
+            (Token::FnSqrt, fn_sqrt::Node::new, 1),
+            (Token::FnPow, fn_pow::Node::new, 2),
+            (Token::FnSin, fn_sin::Node::new, 1),
+            (Token::FnCos, fn_cos::Node::new, 1),
+            (Token::FnTan, fn_tan::Node::new, 1),
+            (Token::FnAsin, fn_asin::Node::new, 1),
+            (Token::FnAcos, fn_acos::Node::new, 1),
+            (Token::FnAtan, fn_atan::Node::new, 1),
+            (Token::FnSinh, fn_sinh::Node::new, 1),
+            (Token::FnCosh, fn_cosh::Node::new, 1),
+            (Token::FnTanh, fn_tanh::Node::new, 1),
+            (Token::FnAsinh, fn_asinh::Node::new, 1),
+            (Token::FnAcosh, fn_acosh::Node::new, 1),
+            (Token::FnAtanh, fn_atanh::Node::new, 1),
         ],
     ) {
         x

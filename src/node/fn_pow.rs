@@ -1,11 +1,11 @@
 use super::*;
 
-pub struct FnPow {
+pub struct Node {
     base: Box<ThreadSafeNode>,
     exp: Box<ThreadSafeNode>,
 }
 
-impl Node for FnPow {
+impl super::Node for Node {
     fn new(seqs: Vec<Vec<Token>>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
         let (base, mut base_refs) = parse(&seqs[0]);
         let (exp, mut exp_refs) = parse(&seqs[1]);

@@ -1,11 +1,11 @@
 use super::*;
 
-pub struct LeftShift {
+pub struct Node {
     left: Box<ThreadSafeNode>,
     right: Box<ThreadSafeNode>,
 }
 
-impl Node for LeftShift {
+impl super::Node for Node {
     fn new(seqs: Vec<Vec<Token>>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
         let (left, mut left_refs) = parse(&seqs[0]);
         let (right, mut right_refs) = parse(&seqs[1]);

@@ -1,10 +1,10 @@
 use super::*;
 
-pub struct FnSum {
+pub struct Node {
     leaf: Box<ThreadSafeNode>,
 }
 
-impl Node for FnSum {
+impl super::Node for Node {
     fn new(seqs: Vec<Vec<Token>>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
         let (leaf, leaf_refs) = parse(&seqs[0]);
         (Box::new(Self { leaf }), leaf_refs)

@@ -1,11 +1,11 @@
 use super::*;
 
-pub struct FnRef {
+pub struct Node {
     x: Box<ThreadSafeNode>,
     y: Box<ThreadSafeNode>,
 }
 
-impl Node for FnRef {
+impl super::Node for Node {
     fn new(seqs: Vec<Vec<Token>>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
         let (x, mut x_refs) = parse(&seqs[0]);
         let (y, mut y_refs) = parse(&seqs[1]);
