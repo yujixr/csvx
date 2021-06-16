@@ -57,16 +57,31 @@ impl Table {
         tree_table: &Vec<Vec<Box<ThreadSafeNode>>>,
         refs_table: &Vec<Vec<Vec<(usize, usize)>>>,
         calculated_table: &mut Vec<Vec<Value>>,
+        walked_position: &mut Vec<(usize, usize)>,
     ) {
-        calculated_table[y][x] = tree_table[y][x].calc(&calculated_table);
+        walked_position.push((x, y));
+
+        calculated_table[y][x] =
+            if refs_table[y][x]
+                .iter()
+                .fold(false, |b, (x_of_target, y_of_target)| {
+                    b || walked_position.contains(&(*x_of_target, *y_of_target))
+                })
+            {
+                Value::Error
+            } else {
+                tree_table[y][x].calc(&calculated_table)
+            };
+
         for &(x_of_target, y_of_target) in &refs_table[y][x] {
-            if x != x_of_target || y != y_of_target {
+            if !walked_position.contains(&(x_of_target, y_of_target)) {
                 Self::calc(
                     x_of_target,
                     y_of_target,
                     tree_table,
                     refs_table,
                     calculated_table,
+                    walked_position,
                 );
             }
         }

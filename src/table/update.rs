@@ -45,9 +45,7 @@ impl Table {
             }
         }
 
-        if !refs_table[y][x].contains(&(x, y)) {
-            Self::calc(x, y, &tree_table, &refs_table, calculated_table);
-        }
+        Self::calc(x, y, &tree_table, &refs_table, calculated_table, &mut vec![]);
         Ok(())
     }
 }

@@ -183,6 +183,10 @@ fn parse_for_function(
         usize,
     )],
 ) -> Option<(Box<ThreadSafeNode>, Vec<(usize, usize)>)> {
+    if seq.len() < 3 {
+        return None;
+    }
+
     if let (
         Some(&Token::ParenthesisEnd),
         Some(&Token::ParenthesisBegin),

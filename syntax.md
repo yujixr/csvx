@@ -12,6 +12,7 @@ The following describes the syntax of the expression for each item.
 | String | Be sure to enclose the string in double quotes. |
 | Boolean | Specify true or false. |
 | Ref | Specify the rows in uppercase letters and the columns in numbers. For example, the upper left is A1, and the one to the right is B1. |
+| Range | The range is represented by two Ref type values. For example, A1:B2. |
 
 ## Supported Operators
 
@@ -43,6 +44,8 @@ The following describes the syntax of the expression for each item.
 | Function | Description |
 |---|---|
 | ref(x, y) | Deprecated. Returns the value at (x, y). |
+| sum(range) | Returns the sum of the values in the range. |
+| avg(range) | Returns the average of the values in the range. |
 | if(condition, on_true, on_false) | If condition is true, this returns on_true. Otherwise, it returns on_false. |
 | round(x) | Returns the nearest integer to a number. Round half-way cases away from 0.0. |
 | floor(x) | Returns the largest integer less than or equal to a number. |
