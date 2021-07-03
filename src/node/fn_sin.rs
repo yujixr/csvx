@@ -9,12 +9,18 @@ impl super::Node for Node {
         let (leaf, leaf_refs) = parse(&seqs[0]);
         (Box::new(Self { leaf }), leaf_refs)
     }
-    fn calc(&self, calculated_table: &Vec<Vec<Value>>) -> Value {
+    fn calc(
+        &mut self,
+        calculated_table: &Vec<Vec<Value>>,
+    ) -> (Value, Vec<(usize, usize)>, Vec<(usize, usize)>) {
         let leaf = self.leaf.calc(calculated_table);
-        match leaf {
+
+        let value = match leaf.0 {
             Value::Integer(x) => Value::Float((x as f64).sin()),
             Value::Float(x) => Value::Float(x.sin()),
             _ => Value::Error,
-        }
+        };
+
+        (value, leaf.1, leaf.2)
     }
 }

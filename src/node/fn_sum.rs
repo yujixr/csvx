@@ -2,17 +2,36 @@ use super::*;
 
 pub struct Node {
     leaf: Box<ThreadSafeNode>,
+    old_dependents_range: Option<(usize, usize, usize, usize)>,
 }
 
 impl super::Node for Node {
     fn new(seqs: Vec<Vec<Token>>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
         let (leaf, leaf_refs) = parse(&seqs[0]);
-        (Box::new(Self { leaf }), leaf_refs)
+        (
+            Box::new(Self {
+                leaf,
+                old_dependents_range: None,
+            }),
+            leaf_refs,
+        )
     }
-    fn calc(&self, calculated_table: &Vec<Vec<Value>>) -> Value {
-        let leaf = self.leaf.calc(calculated_table);
-        match leaf {
+
+    fn calc(
+        &mut self,
+        calculated_table: &Vec<Vec<Value>>,
+    ) -> (Value, Vec<(usize, usize)>, Vec<(usize, usize)>) {
+        let mut leaf = self.leaf.calc(calculated_table);
+
+        if let Some((x1, y1, x2, y2)) = self.old_dependents_range {
+            leaf.1.append(&mut compute_refs_from_range(x1, y1, x2, y2));
+        }
+
+        let value = match leaf.0 {
             Value::Range(x1, y1, x2, y2) => {
+                leaf.2.append(&mut compute_refs_from_range(x1, y1, x2, y2));
+                self.old_dependents_range = Some((x1, y1, x2, y2));
+
                 let rx: Vec<usize> = (x1.min(x2)..=x1.max(x2)).collect();
                 let ry: Vec<usize> = (y1.min(y2)..=y1.max(y2)).collect();
 
@@ -49,6 +68,8 @@ impl super::Node for Node {
                 })
             }
             _ => Value::Error,
-        }
+        };
+
+        (value, leaf.1, leaf.2)
     }
 }

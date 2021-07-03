@@ -1,6 +1,6 @@
 [package]
 name = "csvx"
-version = "0.1.15"
+version = "0.1.16"
 authors = ["YUJI <mail@yuji.ne.jp>"]
 edition = "2018"
 
@@ -20,4 +20,4 @@ license = "MIT"
 
 [dependencies]
 csv = "1.1.6"
-thiserror = "1.0.25"
+thiserror = "1.0.26"

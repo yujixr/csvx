@@ -52,9 +52,24 @@ pub use value::Value;
 
 pub type ThreadSafeNode = dyn Node + Sync + Send;
 
+fn compute_refs_from_range(x1: usize, y1: usize, x2: usize, y2: usize) -> Vec<(usize, usize)> {
+    let rx = x1.min(x2)..=x1.max(x2);
+    let ry = y1.min(y2)..=y1.max(y2);
+    rx.flat_map(|x| {
+        return ry.clone().map(move |y| (x, y));
+    })
+    .collect()
+}
+
 pub trait Node {
+    /// Return value means (calculated_value, static_dependents)
     fn new(seqs: Vec<Vec<Token>>) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>)
     where
         Self: Sized + Sync + Send;
-    fn calc(&self, calculated_table: &Vec<Vec<Value>>) -> Value;
+
+    /// Return value means (calculated_value, old_dependents, new_dependents)
+    fn calc(
+        &mut self,
+        calculated_table: &Vec<Vec<Value>>,
+    ) -> (Value, Vec<(usize, usize)>, Vec<(usize, usize)>);
 }

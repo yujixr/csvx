@@ -22,18 +22,28 @@ impl super::Node for Node {
             condition_refs,
         )
     }
-    fn calc(&self, calculated_table: &Vec<Vec<Value>>) -> Value {
-        let condition = self.condition.calc(calculated_table);
-        let on_true = self.on_true.calc(calculated_table);
-        let on_false = self.on_false.calc(calculated_table);
-        if let Value::Boolean(condition) = condition {
+    fn calc(
+        &mut self,
+        calculated_table: &Vec<Vec<Value>>,
+    ) -> (Value, Vec<(usize, usize)>, Vec<(usize, usize)>) {
+        let mut condition = self.condition.calc(calculated_table);
+        let mut on_true = self.on_true.calc(calculated_table);
+        let mut on_false = self.on_false.calc(calculated_table);
+
+        let value = if let Value::Boolean(condition) = condition.0 {
             if condition {
-                on_true
+                on_true.0
             } else {
-                on_false
+                on_false.0
             }
         } else {
             Value::Error
-        }
+        };
+
+        condition.1.append(&mut on_true.1);
+        condition.1.append(&mut on_false.1);
+        condition.2.append(&mut on_true.2);
+        condition.2.append(&mut on_false.2);
+        (value, condition.1, condition.2)
     }
 }

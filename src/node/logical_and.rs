@@ -12,12 +12,20 @@ impl super::Node for Node {
         left_refs.append(&mut right_refs);
         (Box::new(Self { left, right }), left_refs)
     }
-    fn calc(&self, calculated_table: &Vec<Vec<Value>>) -> Value {
-        let left = self.left.calc(calculated_table);
-        let right = self.right.calc(calculated_table);
-        match (left, right) {
+    fn calc(
+        &mut self,
+        calculated_table: &Vec<Vec<Value>>,
+    ) -> (Value, Vec<(usize, usize)>, Vec<(usize, usize)>) {
+        let mut left = self.left.calc(calculated_table);
+        let mut right = self.right.calc(calculated_table);
+
+        let value = match (left.0, right.0) {
             (Value::Boolean(left), Value::Boolean(right)) => Value::Boolean(left && right),
             _ => Value::Error,
-        }
+        };
+
+        left.1.append(&mut right.1);
+        left.2.append(&mut right.2);
+        (value, left.1, left.2)
     }
 }

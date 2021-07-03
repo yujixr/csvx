@@ -11,8 +11,8 @@ impl Table {
     pub fn remove_y(&mut self, y: usize) {
         let raw_table = &mut self.raw_table;
         let tree_table = &mut self.tree_table;
-        let refs_table = &mut self.refs_table;
-        let refs_to_table = &mut self.refs_to_table;
+        let ref_src_table = &mut self.ref_src_table;
+        let dependents_table = &mut self.dependents_table;
         let calculated_table = &mut self.calculated_table;
 
         if raw_table.len() == 1 {
@@ -21,10 +21,10 @@ impl Table {
 
         raw_table.remove(y);
         tree_table.remove(y);
-        refs_to_table.remove(y);
+        dependents_table.remove(y);
         calculated_table.remove(y);
 
-        *refs_table = refs_table
+        *ref_src_table = ref_src_table
             .iter()
             .map(|refs_row| {
                 refs_row
@@ -46,15 +46,24 @@ impl Table {
             })
             .collect();
 
-        for y_of_src in y..refs_table.len() {
-            for x_of_src in 0..refs_table[y_of_src].len() {
-                for &(x, y) in &refs_table[y_of_src][x_of_src] {
-                    Self::calc(x, y, tree_table, refs_table, calculated_table, &mut vec![]);
+        for y_of_src in y..ref_src_table.len() {
+            for x_of_src in 0..ref_src_table[y_of_src].len() {
+                for i in 0..ref_src_table[y_of_src][x_of_src].len() {
+                    let (x, y) = ref_src_table[y_of_src][x_of_src][i];
+                    Self::calc(
+                        x,
+                        y,
+                        tree_table,
+                        ref_src_table,
+                        dependents_table,
+                        calculated_table,
+                        &mut vec![],
+                    );
                 }
             }
         }
 
-        refs_table.swap_remove(refs_table.len() - 1);
+        ref_src_table.swap_remove(ref_src_table.len() - 1);
     }
 
     /// Remove a column at position x.
@@ -67,8 +76,8 @@ impl Table {
     pub fn remove_x(&mut self, x: usize) {
         let raw_table = &mut self.raw_table;
         let tree_table = &mut self.tree_table;
-        let refs_table = &mut self.refs_table;
-        let refs_to_table = &mut self.refs_to_table;
+        let ref_src_table = &mut self.ref_src_table;
+        let dependents_table = &mut self.dependents_table;
         let calculated_table = &mut self.calculated_table;
 
         if let Some(row) = raw_table.get(0) {
@@ -85,14 +94,14 @@ impl Table {
         for line in tree_table.iter_mut() {
             line.remove(x);
         }
-        for line in refs_to_table {
+        for line in dependents_table.iter_mut() {
             line.remove(x);
         }
         for line in calculated_table.iter_mut() {
             line.remove(x);
         }
 
-        *refs_table = refs_table
+        *ref_src_table = ref_src_table
             .iter()
             .map(|refs_row| {
                 refs_row
@@ -114,15 +123,24 @@ impl Table {
             })
             .collect();
 
-        for y_of_src in 0..refs_table.len() {
-            for x_of_src in x..refs_table[y_of_src].len() {
-                for &(x, y) in &refs_table[y_of_src][x_of_src] {
-                    Self::calc(x, y, tree_table, refs_table, calculated_table, &mut vec![]);
+        for y_of_src in 0..ref_src_table.len() {
+            for x_of_src in x..ref_src_table[y_of_src].len() {
+                for i in 0..ref_src_table[y_of_src][x_of_src].len() {
+                    let (x, y) = ref_src_table[y_of_src][x_of_src][i];
+                    Self::calc(
+                        x,
+                        y,
+                        tree_table,
+                        ref_src_table,
+                        dependents_table,
+                        calculated_table,
+                        &mut vec![],
+                    );
                 }
             }
         }
 
-        for line in refs_table {
+        for line in ref_src_table {
             line.swap_remove(line.len() - 1);
         }
     }

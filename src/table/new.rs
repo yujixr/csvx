@@ -32,36 +32,41 @@ impl Table {
 
         let mut raw_table = vec![];
         let mut tree_table = vec![];
-        let mut refs_table = vec![];
-        let mut refs_to_table = vec![];
+        let mut ref_src_table = vec![];
+        let mut dependents_table = vec![];
         let mut calculated_table = vec![];
         for raw_csv_line in raw_csv_table {
             let mut raw_line = vec![];
             let mut tree_line = vec![];
-            let mut refs_line = vec![];
-            let mut refs_to_line = vec![];
+            let mut ref_src_line = vec![];
+            let mut dependents_line = vec![];
             let mut calculated_line = vec![];
             for raw_item in raw_csv_line {
-                let (tree, refs) = Self::build_tree(raw_item.clone());
+                let (tree, refs) = Self::build_tree(&raw_item);
+
+                let mut dependents = HashMap::new();
+                for dependent in refs {
+                    *(dependents.entry(dependent).or_insert(0)) += 1;
+                }
 
                 raw_line.push(raw_item);
-                refs_line.push(vec![]);
-                refs_to_line.push(refs);
+                ref_src_line.push(vec![]);
+                dependents_line.push(dependents);
                 tree_line.push(tree);
                 calculated_line.push(Value::Error);
             }
             raw_table.push(raw_line);
             tree_table.push(tree_line);
-            refs_table.push(refs_line);
-            refs_to_table.push(refs_to_line);
+            ref_src_table.push(ref_src_line);
+            dependents_table.push(dependents_line);
             calculated_table.push(calculated_line);
         }
 
-        for y in 0..refs_table.len() {
-            for x in 0..refs_table[y].len() {
-                for &(x_of_src, y_of_src) in &refs_to_table[y][x] {
-                    if y_of_src < refs_table.len() && x_of_src < refs_table[y].len() {
-                        refs_table[y_of_src][x_of_src].push((x, y));
+        for y in 0..ref_src_table.len() {
+            for x in 0..ref_src_table[y].len() {
+                for &(x_of_src, y_of_src) in dependents_table[y][x].keys() {
+                    if y_of_src < ref_src_table.len() && x_of_src < ref_src_table[y].len() {
+                        ref_src_table[y_of_src][x_of_src].push((x, y));
                     }
                 }
             }
@@ -72,8 +77,9 @@ impl Table {
                 Self::calc(
                     x,
                     y,
-                    &tree_table,
-                    &refs_table,
+                    &mut tree_table,
+                    &mut ref_src_table,
+                    &mut dependents_table,
                     &mut calculated_table,
                     &mut vec![],
                 );
@@ -83,8 +89,8 @@ impl Table {
         Ok(Table {
             raw_table,
             tree_table,
-            refs_table,
-            refs_to_table,
+            ref_src_table,
+            dependents_table,
             calculated_table,
             current_pos_y: 0,
         })

@@ -1,3 +1,4 @@
+mod calc;
 mod export;
 mod insert;
 mod new;
@@ -6,7 +7,7 @@ mod update;
 
 use super::*;
 use node::{ThreadSafeNode, Value};
-use std::{borrow::Borrow, error::Error, fmt, ops};
+use std::{borrow::Borrow, collections::HashMap, error::Error, fmt, ops};
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -21,8 +22,8 @@ pub enum TableError {
 pub struct Table {
     raw_table: Vec<Vec<String>>,
     tree_table: Vec<Vec<Box<ThreadSafeNode>>>,
-    refs_table: Vec<Vec<Vec<(usize, usize)>>>,
-    refs_to_table: Vec<Vec<Vec<(usize, usize)>>>,
+    ref_src_table: Vec<Vec<Vec<(usize, usize)>>>,
+    dependents_table: Vec<Vec<HashMap<(usize, usize), u32>>>,
     calculated_table: Vec<Vec<Value>>,
     current_pos_y: usize,
 }
@@ -38,7 +39,7 @@ impl Table {
         &self.calculated_table
     }
 
-    fn build_tree<T: Borrow<str>>(raw_string: T) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
+    fn build_tree<T: Borrow<str>>(raw_string: &T) -> (Box<ThreadSafeNode>, Vec<(usize, usize)>) {
         if let Ok(primitive_token_string) = token::primitive_parse(raw_string) {
             if let Ok(token_string) = token::parse(primitive_token_string) {
                 return if token_string.len() == 0 {
@@ -49,42 +50,6 @@ impl Table {
             }
         }
         (Box::new(Value::Error) as Box<ThreadSafeNode>, vec![])
-    }
-
-    fn calc(
-        x: usize,
-        y: usize,
-        tree_table: &Vec<Vec<Box<ThreadSafeNode>>>,
-        refs_table: &Vec<Vec<Vec<(usize, usize)>>>,
-        calculated_table: &mut Vec<Vec<Value>>,
-        walked_position: &mut Vec<(usize, usize)>,
-    ) {
-        walked_position.push((x, y));
-
-        calculated_table[y][x] =
-            if refs_table[y][x]
-                .iter()
-                .fold(false, |b, (x_of_target, y_of_target)| {
-                    b || walked_position.contains(&(*x_of_target, *y_of_target))
-                })
-            {
-                Value::Error
-            } else {
-                tree_table[y][x].calc(&calculated_table)
-            };
-
-        for &(x_of_target, y_of_target) in &refs_table[y][x] {
-            if !walked_position.contains(&(x_of_target, y_of_target)) {
-                Self::calc(
-                    x_of_target,
-                    y_of_target,
-                    tree_table,
-                    refs_table,
-                    calculated_table,
-                    walked_position,
-                );
-            }
-        }
     }
 }
 

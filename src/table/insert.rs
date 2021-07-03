@@ -11,8 +11,8 @@ impl Table {
     pub fn insert_y(&mut self, y: usize) {
         let raw_table = &mut self.raw_table;
         let tree_table = &mut self.tree_table;
-        let refs_table = &mut self.refs_table;
-        let refs_to_table = &mut self.refs_to_table;
+        let ref_src_table = &mut self.ref_src_table;
+        let dependents_table = &mut self.dependents_table;
         let calculated_table = &mut self.calculated_table;
 
         raw_table.insert(
@@ -35,16 +35,16 @@ impl Table {
             },
         );
 
-        refs_table.push(if let Some(last) = refs_table.last() {
+        ref_src_table.push(if let Some(last) = ref_src_table.last() {
             (0..last.len()).map(|_| vec![]).collect()
         } else {
             vec![]
         });
 
-        refs_to_table.insert(
+        dependents_table.insert(
             y,
-            if let Some(last) = refs_to_table.last() {
-                (0..last.len()).map(|_| vec![]).collect()
+            if let Some(last) = dependents_table.last() {
+                (0..last.len()).map(|_| HashMap::new()).collect()
             } else {
                 vec![]
             },
@@ -59,7 +59,7 @@ impl Table {
             },
         );
 
-        *refs_table = refs_table
+        *ref_src_table = ref_src_table
             .iter()
             .map(|refs_row| {
                 refs_row
@@ -79,10 +79,19 @@ impl Table {
             })
             .collect();
 
-        for y_of_src in (y + 1)..refs_table.len() {
-            for x_of_src in 0..refs_table[y_of_src].len() {
-                for &(x, y) in &refs_table[y_of_src][x_of_src] {
-                    Self::calc(x, y, tree_table, refs_table, calculated_table, &mut vec![]);
+        for y_of_src in (y + 1)..ref_src_table.len() {
+            for x_of_src in 0..ref_src_table[y_of_src].len() {
+                for i in 0..ref_src_table[y_of_src][x_of_src].len() {
+                    let (x, y) = ref_src_table[y_of_src][x_of_src][i];
+                    Self::calc(
+                        x,
+                        y,
+                        tree_table,
+                        ref_src_table,
+                        dependents_table,
+                        calculated_table,
+                        &mut vec![],
+                    );
                 }
             }
         }
@@ -98,8 +107,8 @@ impl Table {
     pub fn insert_x(&mut self, x: usize) {
         let raw_table = &mut self.raw_table;
         let tree_table = &mut self.tree_table;
-        let refs_table = &mut self.refs_table;
-        let refs_to_table = &mut self.refs_to_table;
+        let ref_src_table = &mut self.ref_src_table;
+        let dependents_table = &mut self.dependents_table;
         let calculated_table = &mut self.calculated_table;
 
         for line in raw_table.iter_mut() {
@@ -108,17 +117,17 @@ impl Table {
         for line in tree_table.iter_mut() {
             line.insert(x, Box::new(Value::Empty));
         }
-        for line in refs_table.iter_mut() {
+        for line in ref_src_table.iter_mut() {
             line.push(vec![]);
         }
-        for line in refs_to_table.iter_mut() {
-            line.insert(x, vec![]);
+        for line in dependents_table.iter_mut() {
+            line.insert(x, HashMap::new());
         }
         for line in calculated_table.iter_mut() {
             line.insert(x, Value::Empty);
         }
 
-        *refs_table = refs_table
+        *ref_src_table = ref_src_table
             .iter()
             .map(|refs_row| {
                 refs_row
@@ -138,10 +147,19 @@ impl Table {
             })
             .collect();
 
-        for y_of_src in 0..refs_table.len() {
-            for x_of_src in (x + 1)..refs_table[y_of_src].len() {
-                for &(x, y) in &refs_table[y_of_src][x_of_src] {
-                    Self::calc(x, y, tree_table, refs_table, calculated_table, &mut vec![]);
+        for y_of_src in 0..ref_src_table.len() {
+            for x_of_src in (x + 1)..ref_src_table[y_of_src].len() {
+                for i in 0..ref_src_table[y_of_src][x_of_src].len() {
+                    let (x, y) = ref_src_table[y_of_src][x_of_src][i];
+                    Self::calc(
+                        x,
+                        y,
+                        tree_table,
+                        ref_src_table,
+                        dependents_table,
+                        calculated_table,
+                        &mut vec![],
+                    );
                 }
             }
         }

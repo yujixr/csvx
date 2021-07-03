@@ -12,10 +12,14 @@ impl super::Node for Node {
         base_refs.append(&mut exp_refs);
         (Box::new(Self { base, exp }), base_refs)
     }
-    fn calc(&self, calculated_table: &Vec<Vec<Value>>) -> Value {
-        let base = self.base.calc(calculated_table);
-        let exp = self.exp.calc(calculated_table);
-        match (base, exp) {
+    fn calc(
+        &mut self,
+        calculated_table: &Vec<Vec<Value>>,
+    ) -> (Value, Vec<(usize, usize)>, Vec<(usize, usize)>) {
+        let mut base = self.base.calc(calculated_table);
+        let mut exp = self.exp.calc(calculated_table);
+
+        let value = match (base.0, exp.0) {
             (Value::Integer(base), Value::Integer(exp)) => {
                 if exp >= 0 {
                     Value::Integer(base.pow(exp as u32))
@@ -27,6 +31,10 @@ impl super::Node for Node {
             (Value::Float(base), Value::Integer(exp)) => Value::Float(base.powi(exp as i32)),
             (Value::Float(base), Value::Float(exp)) => Value::Float(base.powf(exp)),
             _ => Value::Error,
-        }
+        };
+
+        base.1.append(&mut exp.1);
+        base.2.append(&mut exp.2);
+        (value, base.1, base.2)
     }
 }

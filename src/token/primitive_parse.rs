@@ -1,7 +1,7 @@
 use super::*;
 use std::borrow::Borrow;
 
-pub fn primitive_parse<T: Borrow<str>>(raw_string: T) -> Result<Vec<PrimitiveToken>, ()> {
+pub fn primitive_parse<T: Borrow<str>>(raw_string: &T) -> Result<Vec<PrimitiveToken>, ()> {
     let mut tokens = vec![];
 
     let chars: Vec<char> = raw_string.borrow().chars().collect();
