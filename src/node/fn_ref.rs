@@ -34,19 +34,19 @@ impl super::Node for Node {
         x.2.append(&mut y.2);
 
         let value = match (x.0, y.0) {
-            (Value::Integer(depemndent_x), Value::Integer(depemndent_y)) => {
-                if 0 <= depemndent_y
-                    && (depemndent_y as usize) < calculated_table.len()
-                    && 0 <= depemndent_x
-                    && (depemndent_x as usize) < calculated_table[depemndent_y as usize].len()
+            (Value::Integer(dependent_x), Value::Integer(dependent_y)) => {
+                if 0 <= dependent_y
+                    && (dependent_y as usize) < calculated_table.len()
+                    && 0 <= dependent_x
+                    && (dependent_x as usize) < calculated_table[dependent_y as usize].len()
                 {
-                    let depemndent_x = depemndent_x as usize;
-                    let depemndent_y = depemndent_y as usize;
+                    let dependent_x = dependent_x as usize;
+                    let dependent_y = dependent_y as usize;
 
-                    x.2.push((depemndent_x, depemndent_y));
-                    self.old_dependent = Some((depemndent_x, depemndent_y));
+                    x.2.push((dependent_x, dependent_y));
+                    self.old_dependent = Some((dependent_x, dependent_y));
 
-                    calculated_table[depemndent_y][depemndent_x].clone()
+                    calculated_table[dependent_y][dependent_x].clone()
                 } else {
                     self.old_dependent = None;
                     Value::Error

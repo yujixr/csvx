@@ -27,23 +27,33 @@ impl Table {
                     tree_table[y][x].calc(&calculated_table);
 
                 // Increment reference count.
-                for dependent in new_dependents {
-                    let entry = dependents_table[y][x].entry(dependent).or_insert(0);
+                for (dependent_x, dependent_y) in new_dependents {
+                    if dependent_y < dependents_table.len()
+                        && dependent_x < dependents_table[dependent_y].len()
+                    {
+                        let entry = dependents_table[y][x]
+                            .entry((dependent_x, dependent_y))
+                            .or_insert(0);
 
-                    if *entry == 0 {
-                        ref_src_table[dependent.1][dependent.0].push((x, y));
+                        if *entry == 0 {
+                            ref_src_table[dependent_y][dependent_x].push((x, y));
+                        }
+
+                        *entry += 1;
                     }
-
-                    *entry += 1;
                 }
 
                 // Decrement reference count.
-                for dependent in old_dependents {
-                    if let Some(n) = dependents_table[y][x].get_mut(&dependent) {
+                for (dependent_x, dependent_y) in old_dependents {
+                    if let (true, true, Some(n)) = (
+                        dependent_y < dependents_table.len(),
+                        dependent_x < dependents_table[dependent_y].len(),
+                        dependents_table[y][x].get_mut(&(dependent_x, dependent_y)),
+                    ) {
                         *n -= 1;
 
                         if *n == 0 {
-                            ref_src_table[dependent.1][dependent.0]
+                            ref_src_table[dependent_y][dependent_x]
                                 .retain(|&(x_src, y_src)| x_src == x && y_src == y);
                         }
                     }
@@ -57,7 +67,15 @@ impl Table {
 
         for i in 0..ref_src_table[y][x].len() {
             let (x_of_target, y_of_target) = ref_src_table[y][x][i];
-            if !walked_position.contains(&(x_of_target, y_of_target)) {
+            let n_walks = walked_position.iter().fold(0, |b, walked_pos| {
+                if walked_pos == &(x_of_target, y_of_target) {
+                    b + 1
+                } else {
+                    b
+                }
+            });
+
+            if n_walks < 2 {
                 Self::calc(
                     x_of_target,
                     y_of_target,

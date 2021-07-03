@@ -43,7 +43,7 @@ The following describes the syntax of the expression for each item.
 
 | Function | Description |
 |---|---|
-| ref(x, y) | Deprecated. Returns the value at (x, y). |
+| ref(x, y) | Returns the value at (x, y). |
 | sum(range) | Returns the sum of the values in the range. |
 | avg(range) | Returns the average of the values in the range. |
 | if(condition, on_true, on_false) | If condition is true, this returns on_true. Otherwise, it returns on_false. |
